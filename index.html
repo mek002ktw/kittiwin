@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<title>Manage Devices and Readings</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  h1 {
+    text-align: center;
+    color: #2c3e50;
+    font-size: 2.5em;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  h2 {
+    color: #34495e;
+    font-size: 1.8em;
+    margin: 30px 0 20px 0;
+    padding: 10px 0;
+    border-bottom: 3px solid #3498db;
+    position: relative;
+  }
+
+  h2::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: #e74c3c;
+    border-radius: 2px;
+  }
+
+  h3 {
+    color: #2c3e50;
+    font-size: 1.4em;
+    margin: 25px 0 15px 0;
+    padding: 8px 15px;
+    background: linear-gradient(45deg, #f39c12, #e67e22);
+    color: white;
+    border-radius: 25px;
+    display: inline-block;
+    box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
+  }
+
+  .table-container {
+    overflow-x: auto;
+    margin-bottom: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  th {
+    background: linear-gradient(45deg, #3498db, #2980b9);
+    color: white;
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.9em;
+  }
+
+  td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ecf0f1;
+    transition: all 0.3s ease;
+  }
+
+  tr:hover td {
+    background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+    transform: scale(1.01);
+  }
+
+  tr:nth-child(even) {
+    background: #f8f9fa;
+  }
+
+  .form-container {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    border: 2px solid #ecf0f1;
+    transition: all 0.3s ease;
+  }
+
+  .form-container:hover {
+    border-color: #3498db;
+    transform: translateY(-2px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 0.95em;
+  }
+
+  input[type="text"], input[type="number"], input[type="date"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #ecf0f1;
+    border-radius: 10px;
+    font-size: 1em;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+  }
+
+  input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus {
+    outline: none;
+    border-color: #3498db;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    transform: translateY(-1px);
+  }
+
+  input:disabled {
+    background: #ecf0f1;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  .button-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 25px;
+    font-size: 0.95em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  button[type="submit"] {
+    background: linear-gradient(45deg, #27ae60, #2ecc71);
+    color: white;
+  }
+
+  button[type="submit"]:hover {
+    background: linear-gradient(45deg, #2ecc71, #27ae60);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(46, 204, 113, 0.3);
+  }
+
+  .cancel-btn {
+    background: linear-gradient(45deg, #95a5a6, #7f8c8d);
+    color: white;
+  }
+
+  .cancel-btn:hover {
+    background: linear-gradient(45deg, #7f8c8d, #95a5a6);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(127, 140, 141, 0.3);
+  }
+
+  .edit-btn {
+    background: linear-gradient(45deg, #f39c12, #e67e22);
+    color: white;
+    padding: 8px 16px;
+    font-size: 0.8em;
+  }
+
+  .edit-btn:hover {
+    background: linear-gradient(45deg, #e67e22, #f39c12);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(243, 156, 18, 0.3);
+  }
+
+  .delete-btn {
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 8px 16px;
+    font-size: 0.8em;
+  }
+
+  .delete-btn:hover {
+    background: linear-gradient(45deg, #c0392b, #e74c3c);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.3);
+  }
+
+  .divider {
+    height: 3px;
+    background: linear-gradient(45deg, #3498db, #e74c3c, #f39c12, #27ae60);
+    margin: 40px 0;
+    border-radius: 2px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .section {
+    margin-bottom: 50px;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .container {
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  .table-container {
+    animation: fadeIn 0.8s ease-out;
+  }
+
+  .form-container {
+    animation: fadeIn 1s ease-out;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .container {
+      padding: 20px;
+      margin: 10px;
+    }
+    
+    h1 {
+      font-size: 2em;
+    }
+    
+    h2 {
+      font-size: 1.4em;
+    }
+    
+    table {
+      font-size: 0.9em;
+    }
+    
+    .button-group {
+      flex-direction: column;
+    }
+    
+    button {
+      width: 100%;
+    }
+  }
+
+  /* Loading animation for tables */
+  .loading {
+    text-align: center;
+    padding: 20px;
+    color: #7f8c8d;
+    font-style: italic;
+  }
+
+  /* Success message styling */
+  .success-message {
+    background: linear-gradient(45deg, #27ae60, #2ecc71);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    display: none;
+  }
+
+  .error-message {
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    display: none;
+  }
+
+  /* Enhanced table cell styling */
+  .device-id {
+    font-weight: bold;
+    color: #2c3e50;
+    font-family: monospace;
+  }
+
+  .temperature {
+    color: #e74c3c;
+    font-weight: bold;
+  }
+
+  .humidity {
+    color: #3498db;
+    font-weight: bold;
+  }
+
+  .location {
+    color: #27ae60;
+    font-style: italic;
+  }
+
+  .mac-address {
+    font-family: monospace;
+    color: #7f8c8d;
+    font-size: 0.9em;
+  }
+
+  .status-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+  }
+
+  .status-online {
+    background: #27ae60;
+    box-shadow: 0 0 5px rgba(39, 174, 96, 0.5);
+  }
+
+  .status-offline {
+    background: #e74c3c;
+    box-shadow: 0 0 5px rgba(231, 76, 60, 0.5);
+  }
+
+  /* Floating action effect */
+  .floating-effect {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .floating-effect:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🌡️ Device Management System</h1>
+  
+  <div class="status-indicator status-online"></div>
+  <span id="firebaseStatus">Connected to Firebase</span>
+
+  <div class="section">
+    <h2>📱 Device Table</h2>
+    <div class="table-container">
+      <table id="deviceTable">
+        <thead>
+          <tr>
+            <th>Device ID</th>
+            <th>Name</th>
+            <th>Location</th>
+            <th>MAC Address</th>
+            <th>Start Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <h3>➕ Add / Edit Device</h3>
+    <div class="form-container floating-effect">
+      <div class="success-message" id="deviceSuccessMessage">
+        Device saved successfully! ✅
+      </div>
+      <div class="error-message" id="deviceErrorMessage">
+        Error saving device! ❌
+      </div>
+      <form id="deviceForm">
+        <div class="form-group">
+          <label>🔢 Device ID:</label>
+          <input type="text" id="deviceId" required placeholder="Enter device ID">
+        </div>
+        <div class="form-group">
+          <label>📝 Name:</label>
+          <input type="text" id="deviceName" required placeholder="Enter device name">
+        </div>
+        <div class="form-group">
+          <label>📍 Location:</label>
+          <input type="text" id="deviceLocation" required placeholder="Enter location">
+        </div>
+        <div class="form-group">
+          <label>🔗 MAC Address:</label>
+          <input type="text" id="deviceMac" required placeholder="AA:BB:CC:DD:EE:FF">
+        </div>
+        <div class="form-group">
+          <label>📅 Start Date:</label>
+          <input type="date" id="deviceStartDate" required>
+        </div>
+        <div class="button-group">
+          <button type="submit">💾 Save Device</button>
+          <button type="button" id="deviceFormCancel" class="cancel-btn">❌ Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <h2>📊 Readings Table</h2>
+    <div class="table-container">
+      <table id="readingsTable">
+        <thead>
+          <tr>
+            <th>Device ID</th>
+            <th>Temperature (°C)</th>
+            <th>Humidity (%)</th>
+            <th>Timestamp</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <h3>➕ Add / Edit Reading</h3>
+    <div class="form-container floating-effect">
+      <div class="success-message" id="readingSuccessMessage">
+        Reading saved successfully! ✅
+      </div>
+      <div class="error-message" id="readingErrorMessage">
+        Error saving reading! ❌
+      </div>
+      <form id="readingForm">
+        <div class="form-group">
+          <label>🔢 Device ID:</label>
+          <input type="text" id="readingDeviceId" required placeholder="Enter device ID">
+        </div>
+        <div class="form-group">
+          <label>🌡️ Temperature (°C):</label>
+          <input type="number" step="0.1" id="readingTemp" required placeholder="0.0">
+        </div>
+        <div class="form-group">
+          <label>💧 Humidity (%):</label>
+          <input type="number" step="0.1" id="readingHumidity" required placeholder="0.0">
+        </div>
+        <div class="button-group">
+          <button type="submit">💾 Save Reading</button>
+          <button type="button" id="readingFormCancel" class="cancel-btn">❌ Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDKs -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-app-compat.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-firestore-compat.min.js"></script>
+
+<script>
+  // Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyBPdPSwXxxVkdC-_nYxXtghDqvD2FW4EGg",
+    authDomain: "myiot-26aeb.firebaseapp.com",
+    projectId: "myiot-26aeb",
+    storageBucket: "myiot-26aeb.firebasestorage.app",
+    messagingSenderId: "249866725118",
+    appId: "1:249866725118:web:0ed46799007314bcb9a7af",
+    measurementId: "G-GHH70G8Z3V"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  // References to Firebase collections
+  const devicesRef = db.collection('devices');
+  const readingsRef = db.collection('readings');
+
+  // Local data storage
+  let devices = {};
+  let readings = {};
+
+  const deviceTableBody = document.querySelector('#deviceTable tbody');
+  const readingTableBody = document.querySelector('#readingsTable tbody');
+  const firebaseStatus = document.getElementById('firebaseStatus');
+
+  // --- Firebase helper functions ---
+  function updateFirebaseStatus(isOnline) {
+    const statusIndicator = document.querySelector('.status-indicator');
+    if (isOnline) {
+      statusIndicator.className = 'status-indicator status-online';
+      firebaseStatus.textContent = 'Connected to Firebase';
+    } else {
+      statusIndicator.className = 'status-indicator status-offline';
+      firebaseStatus.textContent = 'Disconnected from Firebase';
+    }
+  }
+
+  // --- Load data from Firebase ---
+  async function loadDevicesFromFirebase() {
+    try {
+      const snapshot = await devicesRef.get();
+      devices = {};
+      snapshot.forEach(doc => {
+        devices[doc.id] = doc.data();
+      });
+      displayDevices();
+      updateFirebaseStatus(true);
+    } catch (error) {
+      console.error('Error loading devices:', error);
+      updateFirebaseStatus(false);
+      showErrorMessage('deviceErrorMessage', 'Error loading devices from Firebase');
+    }
+  }
+
+  async function loadReadingsFromFirebase() {
+    try {
+      const snapshot = await readingsRef.get();
+      readings = {};
+      snapshot.forEach(doc => {
+        readings[doc.id] = doc.data();
+      });
+      displayReadings();
+      updateFirebaseStatus(true);
+    } catch (error) {
+      console.error('Error loading readings:', error);
+      updateFirebaseStatus(false);
+      showErrorMessage('readingErrorMessage', 'Error loading readings from Firebase');
+    }
+  }
+
+  // --- Save data to Firebase ---
+  async function saveDeviceToFirebase(deviceId, deviceData) {
+    try {
+      await devicesRef.doc(deviceId).set(deviceData);
+      return true;
+    } catch (error) {
+      console.error('Error saving device:', error);
+      updateFirebaseStatus(false);
+      return false;
+    }
+  }
+
+  async function saveReadingToFirebase(deviceId, readingData) {
+    try {
+      // Add timestamp
+      readingData.timestamp = firebase.firestore.FieldValue.serverTimestamp();
+      
+      // For readings, we'll create a new document for each reading
+      // but also keep the latest reading with the device ID as document ID
+      await readingsRef.doc(deviceId).set(readingData);
+      
+      // Also save to a subcollection for historical data
+      await readingsRef.doc(deviceId).collection('history').add(readingData);
+      
+      return true;
+    } catch (error) {
+      console.error('Error saving reading:', error);
+      updateFirebaseStatus(false);
+      return false;
+    }
+  }
+
+  // --- Delete from Firebase ---
+  async function deleteDeviceFromFirebase(deviceId) {
+    try {
+      await devicesRef.doc(deviceId).delete();
+      return true;
+    } catch (error) {
+      console.error('Error deleting device:', error);
+      updateFirebaseStatus(false);
+      return false;
+    }
+  }
+
+  async function deleteReadingFromFirebase(deviceId) {
+    try {
+      await readingsRef.doc(deviceId).delete();
+      return true;
+    } catch (error) {
+      console.error('Error deleting reading:', error);
+      updateFirebaseStatus(false);
+      return false;
+    }
+  }
+
+  // --- Display functions ---
+  function displayDevices() {
+    deviceTableBody.innerHTML = '';
+    for (const id in devices) {
+      const d = devices[id];
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="device-id">${id}</td>
+        <td>${d.name}</td>
+        <td class="location">${d.location}</td>
+        <td class="mac-address">${d.mac}</td>
+        <td>${d.start_date}</td>
+        <td>
+          <button class="edit-btn" onclick="editDevice('${id}')">✏️ Edit</button>
+          <button class="delete-btn" onclick="deleteDevice('${id}')">🗑️ Delete</button>
+        </td>
+      `;
+      deviceTableBody.appendChild(tr);
+    }
+  }
+
+  function displayReadings() {
+    readingTableBody.innerHTML = '';
+    for (const id in readings) {
+      const r = readings[id];
+      const timestamp = r.timestamp ? new Date(r.timestamp.toDate()).toLocaleString('th-TH') : 'N/A';
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="device-id">${id}</td>
+        <td class="temperature">${r.temperature}°C</td>
+        <td class="humidity">${r.humidity}%</td>
+        <td>${timestamp}</td>
+        <td>
+          <button class="edit-btn" onclick="editReading('${id}')">✏️ Edit</button>
+          <button class="delete-btn" onclick="deleteReading('${id}')">🗑️ Delete</button>
+        </td>
+      `;
+      readingTableBody.appendChild(tr);
+    }
+  }
+
+  // Success and error message functions
+  function showSuccessMessage(elementId, message = null) {
+    const element = document.getElementById(elementId);
+    if (message) element.textContent = message;
+    element.style.display = 'block';
+    setTimeout(() => {
+      element.style.display = 'none';
+    }, 3000);
+  }
+
+  function showErrorMessage(elementId, message = null) {
+    const element = document.getElementById(elementId);
+    if (message) element.textContent = message;
+    element.style.display = 'block';
+    setTimeout(() => {
+      element.style.display = 'none';
+    }, 5000);
+  }
+
+  // --- Device form handling ---
+  const deviceForm = document.getElementById('deviceForm');
+  const deviceIdInput = document.getElementById('deviceId');
+  const deviceNameInput = document.getElementById('deviceName');
+  const deviceLocationInput = document.getElementById('deviceLocation');
+  const deviceMacInput = document.getElementById('deviceMac');
+  const deviceStartDateInput = document.getElementById('deviceStartDate');
+  const deviceFormCancelBtn = document.getElementById('deviceFormCancel');
+
+  let editDeviceId = null;
+
+  deviceForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const id = deviceIdInput.value.trim();
+    if (!id) return alert('Device ID is required');
+
+    const deviceData = {
+      name: deviceNameInput.value.trim(),
+      location: deviceLocationInput.value.trim(),
+      mac: deviceMacInput.value.trim(),
+      start_date: deviceStartDateInput.value,
+      updated_at: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    // Save to Firebase
+    const success = await saveDeviceToFirebase(id, deviceData);
+    
+    if (success) {
+      // Update local data
+      devices[id] = deviceData;
+      
+      editDeviceId = null;
+      deviceForm.reset();
+      deviceIdInput.disabled = false;
+      displayDevices();
+      showSuccessMessage('deviceSuccessMessage', 'Device saved successfully! ✅');
+      updateFirebaseStatus(true);
+    } else {
+      showErrorMessage('deviceErrorMessage', 'Failed to save device to Firebase ❌');
+    }
+  });
+
+  deviceFormCancelBtn.addEventListener('click', () => {
+    editDeviceId = null;
+    deviceForm.reset();
+    deviceIdInput.disabled = false;
+  });
+
+  window.editDevice = function(id) {
+    const d = devices[id];
+    if (!d) return alert('Device not found');
+
+    editDeviceId = id;
+    deviceIdInput.value = id;
+    deviceNameInput.value = d.name;
+    deviceLocationInput.value = d.location;
+    deviceMacInput.value = d.mac;
+    deviceStartDateInput.value = d.start_date;
+
+    deviceIdInput.disabled = true;
+    
+    // Scroll to form
+    deviceForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  window.deleteDevice = async function(id) {
+    if (confirm(`🗑️ ลบ device ${id} ใช่หรือไม่?\n\nการดำเนินการนี้จะลบข้อมูลทั้งหมดของอุปกรณ์`)) {
+      const success = await deleteDeviceFromFirebase(id);
+      
+      if (success) {
+        delete devices[id];
+        if (readings[id]) {
+          await deleteReadingFromFirebase(id);
+          delete readings[id];
+        }
+        displayDevices();
+        displayReadings();
+        showSuccessMessage('deviceSuccessMessage', 'Device deleted successfully! ✅');
+      } else {
+        showErrorMessage('deviceErrorMessage', 'Failed to delete device ❌');
+      }
+    }
+  }
+
+  // --- Reading form handling ---
+  const readingForm = document.getElementById('readingForm');
+  const readingDeviceIdInput = document.getElementById('readingDeviceId');
+  const readingTempInput = document.getElementById('readingTemp');
+  const readingHumidityInput = document.getElementById('readingHumidity');
+  const readingFormCancelBtn = document.getElementById('readingFormCancel');
+
+  let editReadingId = null;
+
+  readingForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const id = readingDeviceIdInput.value.trim();
+    if (!id) return alert('Device ID is required');
+
+    if (!devices[id]) {
+      return alert(`❌ Device ID "${id}" ยังไม่มีข้อมูล devices\n\nกรุณาเพิ่ม device ก่อน`);
+    }
+
+    const readingData = {
+      temperature: parseFloat(readingTempInput.value),
+      humidity: parseFloat(readingHumidityInput.value),
+      device_id: id
+    };
+
+    // Save to Firebase
+    const success = await saveReadingToFirebase(id, readingData);
+    
+    if (success) {
+      // Update local data (timestamp will be added by Firebase)
+      readings[id] = readingData;
+      
+      editReadingId = null;
+      readingForm.reset();
+      readingDeviceIdInput.disabled = false;
+      
+      // Reload readings to get the timestamp
+      await loadReadingsFromFirebase();
+      
+      showSuccessMessage('readingSuccessMessage', 'Reading saved successfully! ✅');
+      updateFirebaseStatus(true);
+    } else {
+      showErrorMessage('readingErrorMessage', 'Failed to save reading to Firebase ❌');
+    }
+  });
+
+  readingFormCancelBtn.addEventListener('click', () => {
+    editReadingId = null;
+    readingForm.reset();
+    readingDeviceIdInput.disabled = false;
+  });
+
+  window.editReading = function(id) {
+    const r = readings[id];
+    if (!r) return alert('Reading not found');
+
+    editReadingId = id;
+    readingDeviceIdInput.value = id;
+    readingTempInput.value = r.temperature;
+    readingHumidityInput.value = r.humidity;
+
+    readingDeviceIdInput.disabled = true;
+    
+    // Scroll to form
+    readingForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  window.deleteReading = async function(id) {
+    if (confirm(`🗑️ ลบ readings ของ device ${id} ใช่หรือไม่?\n\nการดำเนินการนี้จะลบข้อมูลการอ่านค่าทั้งหมด`)) {
+      const success = await deleteReadingFromFirebase(id);
+      
+      if (success) {
+        delete readings[id];
+        displayReadings();
+        showSuccessMessage('readingSuccessMessage', 'Reading deleted successfully! ✅');
+      } else {
+        showErrorMessage('readingErrorMessage', 'Failed to delete reading ❌');
+      }
+    }
+  }
+
+  // --- Real-time listeners ---
+  function setupRealtimeListeners() {
+    // Listen for device changes
+    devicesRef.onSnapshot((snapshot) => {
+      devices = {};
+      snapshot.forEach(doc => {
+        devices[doc.id] = doc.data();
+      });
+      displayDevices();
+      updateFirebaseStatus(true);
+    }, (error) => {
+      console.error('Error listening to devices:', error);
+      updateFirebaseStatus(false);
+    });
+
+    // Listen for reading changes
+    readingsRef.onSnapshot((snapshot) => {
+      readings = {};
+      snapshot.forEach(doc => {
+        readings[doc.id] = doc.data();
+      });
+      displayReadings();
+      updateFirebaseStatus(true);
+    }, (error) => {
+      console.error('Error listening to readings:', error);
+      updateFirebaseStatus(false);
+    });
+  }
+
+  // --- Initialize application ---
+  async function initializeApp() {
+    try {
+      // Load initial data
+      await Promise.all([
+        loadDevicesFromFirebase(),
+        loadReadingsFromFirebase()
